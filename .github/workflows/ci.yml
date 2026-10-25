@@ -12,6 +12,12 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Windows runners default to an ANSI code page (cp1252). Every script here prints
+# Chinese, which would die with UnicodeEncodeError before any test even runs.
+env:
+  PYTHONUTF8: "1"
+  PYTHONIOENCODING: "utf-8"
+
 jobs:
   static-and-logic:
     runs-on: windows-latest

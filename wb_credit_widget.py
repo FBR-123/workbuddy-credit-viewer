@@ -2682,6 +2682,14 @@ def start_watcher_now():
 
 def main():
     global MANAGED
+    # Windows 控制台默认用 ANSI 代码页（英文机器是 cp1252），直接打印中文会
+    # UnicodeEncodeError 崩掉 —— CLI 在任何区域设置下都该能用。
+    # 编不出来的字符降级成 ?，绝不因为编码问题整个退出。
+    for _stream in (sys.stdout, sys.stderr):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
     ap = argparse.ArgumentParser(
         prog="wb_credit_widget",
         description="WorkBuddy 积分挂件：多账号余额 / 今日消耗 / 到期与耗尽提醒。")
