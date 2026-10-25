@@ -1,0 +1,11 @@
+# Keep line endings deterministic across Windows/Linux contributors.
+* text=auto eol=lf
+
+# Windows-only launchers must stay CRLF (cmd.exe and the script host expect it).
+*.bat text eol=crlf
+*.vbs text eol=crlf
+
+# Binary assets
+*.png binary
+*.jpg binary
+*.ico binary

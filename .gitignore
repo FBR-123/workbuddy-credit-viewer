@@ -1,0 +1,38 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# ---- 运行时数据（绝不能提交）----
+# 配置里有窗口位置；state.json 里有余额采样与账号 uid；日志里有脱敏账号
+config.json
+state.json
+*.log
+*.pid
+*.heartbeat
+*.marker
+
+# ---- 调试残留 ----
+_cmdline.txt
+_wb.txt
+*.tmp
+scratch_*
+*.bak
+
+# ---- 编辑器 / 系统 ----
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+
+# ---- 不要传的截图（临时调试图）----
+debug_*.png
+rot_*.png
+fix_*.png
+verify_*.png

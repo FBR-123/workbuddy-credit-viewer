@@ -1,0 +1,76 @@
+name: tests
+
+# Scope: only the checks that can run without a desktop session and without a
+# live WorkBuddy client. The GUI/E2E tests (lifecycle, pipeline, real-window,
+# window-detection) are deliberately excluded - they create real Tk windows,
+# read %LOCALAPPDATA%, and assert against a running client, so they only make
+# sense on a real interactive machine. Run `tests\run_tests.bat` locally.
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  static-and-logic:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # The app is stdlib-only, so there is nothing to pip install.
+      - name: Show interpreter
+        run: |
+          python --version
+          python -c "import sys; print(sys.executable)"
+
+      - name: CLI smoke (--version / --help)
+        run: |
+          python wb_credit_widget.py --version
+          python wb_credit_widget.py --help
+
+      - name: No secrets / no hardcoded personal paths
+        run: python tests\check_no_secrets.py
+
+      - name: VBS launchers (ascii / structure / Option Explicit / no logic)
+        run: python tests\check_vbs_syntax.py
+
+      - name: Watcher decision logic
+        run: python tests\test_watch_logic.py
+
+      - name: PID identity check
+        run: python tests\test_pid_identity.py
+
+  # Optional: fail the build if the docs mention files that no longer exist.
+  docs-links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Relative links in README / docs must resolve
+        run: |
+          python3 - <<'PY'
+          import os, re, sys
+          bad = 0
+          for rel in ("README.md", "README.en.md", "docs/详细使用手册.md", "docs/发布文案.md"):
+              if not os.path.exists(rel):
+                  continue
+              base = os.path.dirname(rel)
+              text = open(rel, encoding="utf-8").read()
+              for m in re.finditer(r"!?\[[^\]]*\]\(([^)#][^)]*)\)", text):
+                  url = m.group(1).strip()
+                  if url.startswith(("http://", "https://", "mailto:", "#")):
+                      continue
+                  if not os.path.exists(os.path.normpath(os.path.join(base, url))):
+                      print("BROKEN %s -> %s" % (rel, url))
+                      bad += 1
+          sys.exit(1 if bad else 0)
+          PY
