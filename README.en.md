@@ -35,7 +35,7 @@ This widget compresses **balances, today's spend, and the next expiry date for e
 |---|---|
 | **Multi-account rollup** | Scans local login snapshots, de-duplicates by uid, shows them all |
 | **Three-tier refresh** | 15s balance-only for all accounts / 60s full refresh of the current one / 600s full rollup |
-| **Rotation** | The capsule cycles through accounts every 10s (`⟳ 3/7`) |
+| **Rotation** | The capsule cycles through accounts every 10s (`⟳ 3/5`) |
 | **Expiry warnings** | Amber border + blinking `⚠` when a batch expires within 3 days, with 3d / 24h / 6h tiered reminders |
 | **Runout forecast** | Estimates daily burn from the last 7 days and shows “~4d 12h left” |
 | **Change tick** | A red `+N` flashes next to *today* when spend is detected |
@@ -135,7 +135,7 @@ python tests\diagnose_dead.py                   :: on-site diagnosis
 ## Reading the capsule
 
 ```
-● ⟳ 189****3009 3/7 │ 余额 5,666 │ 今日 0 │ 3日到期 322 │ 5日 542  ≈耗尽约4天12时  8s前
+● ⟳ 189****3009 3/5 │ 余额 5,666 │ 今日 0 │ 3日到期 322 │ 5日 542  ≈耗尽约6天7时  8s前
 ```
 
 | Part | Meaning |
